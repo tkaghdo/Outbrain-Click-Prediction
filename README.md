@@ -7,7 +7,9 @@ Kaggle competition to predict which recommended content each user will click.
 clicks_train.csv
 
 display_id: content recommendations served to a specific user
+
 ad_id: displayed advertisement id
+
 clicked: a flag that indicated if the ad (represented by ad_id) was clicked or not (1 for clicked, 0 for not clicked)
 
 sample output
