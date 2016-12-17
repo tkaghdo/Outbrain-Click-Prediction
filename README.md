@@ -30,6 +30,12 @@ sample output
 
 clicks_test.csv
 
+* display_id: content recommendations served to a specific user
+
+* ad_id: displayed advertisement id
+
+sample output
+
 |display_id   |ad_id|
 |-------------|-----|
 |    16874594  |66758
