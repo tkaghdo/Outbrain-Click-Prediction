@@ -52,6 +52,10 @@ sample output
 
 documents_topics.csv
 
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* topic_id: the topic type covered in the document
+* confidence_level: confidence that the given topic was referred to in the document
+
 sample output
 
 |document_id  |topic_id  |confidence_level|
@@ -66,3 +70,21 @@ sample output
 7      1524246|       168|          0.014090
 8      1524246|        54|          0.008782
 9      1524246|       207|          0.008282
+
+
+document_entities.csv
+
+sample output
+
+|   document_id|                         entity_id|  confidence_level|
+|--------------|----------------------------------|------------------|
+|      1524246 | f9eec25663db4cd83183f5c805186f16 |         0.672865
+|      1524246 | 55ebcfbdaff1d6f60b3907151f38527a |         0.399114
+|      1524246 | 839907a972930b17b125eb0247898412 |         0.392096
+|      1524246 | 04d8f9a1ad48f126d5806a9236872604 |         0.213996
+|      1617787 | 612a1d17685a498aff4f036c1ee02c16 |         0.386193
+|      1617787 | fb8c6cb0879e0de876298177eb1d3fcc |         0.364116
+|      1617787 | 793c6a6cf386edb820600d49df045475 |         0.349168
+|      1617787 | b525b84d5ed52a34565b8fb870555abe |         0.287005
+|      1617787 | 758cb9cb3014607cb4a691cbd485cc94 |         0.237957
+|      1617787 | d523aaba6d3916f8b7039fcce0f29639 |         0.235799
