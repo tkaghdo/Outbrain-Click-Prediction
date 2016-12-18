@@ -72,7 +72,11 @@ sample output
 9      1524246|       207|          0.008282
 
 
-document_entities.csv
+documents_entities.csv
+
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* entity_id: an entity_id can represent a person, organization, or location
+* confidence_level: confidence that the given entity was referred to in the document
 
 sample output
 
@@ -88,3 +92,26 @@ sample output
 |      1617787 | b525b84d5ed52a34565b8fb870555abe |         0.287005
 |      1617787 | 758cb9cb3014607cb4a691cbd485cc94 |         0.237957
 |      1617787 | d523aaba6d3916f8b7039fcce0f29639 |         0.235799
+
+
+documents_meta.csv
+
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* source_id: the website (subdomain + domain) displaying the document. ex, edition.cnn.com
+* publisher_id: the publisher (domain) hosting the document. ex, cnn.com
+* publish_time: the time the document was published on the website (source_id + publisher_id)
+
+sample output
+
+|   document_id|  source_id|  publisher_id|         publish_time|
+|--------------|-----------|--------------|---------------------|
+|      1595802 |       1.0 |        603.0 | 2016-06-05 00:00:00
+|      1524246 |       1.0 |        603.0 | 2016-05-26 11:00:00
+|      1617787 |       1.0 |        603.0 | 2016-05-27 00:00:00
+|      1615583 |       1.0 |        603.0 | 2016-06-07 00:00:00
+|      1615460 |       1.0 |        603.0 | 2016-06-20 00:00:00
+|      1615354 |       1.0 |        603.0 | 2016-06-10 00:00:00
+|      1614611 |       1.0 |        603.0 | 2016-06-05 13:00:00
+|      1614235 |       1.0 |        603.0 | 2016-06-09 00:00:00
+|      1614225 |       1.0 |        603.0 | 2016-06-09 00:00:00
+|      1488264 |       1.0 |        603.0 | 2016-05-23 13:00:00
