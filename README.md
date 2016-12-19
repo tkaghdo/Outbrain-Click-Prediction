@@ -115,3 +115,23 @@ sample output
 |      1614235 |       1.0 |        603.0 | 2016-06-09 00:00:00
 |      1614225 |       1.0 |        603.0 | 2016-06-09 00:00:00
 |      1488264 |       1.0 |        603.0 | 2016-05-23 13:00:00
+
+
+documents_catgories.csv
+
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* category_id: the category type covered in the document
+* confidence_level: confidence that the given category was referred to in the document
+
+|   document_id|  category_id|  confidence_level|
+|--------------|-------------|------------------|
+|      1595802 |         1611|          0.920000
+|      1595802 |        1610 |         0.070000
+|      1524246 |        1807 |         0.920000
+|      1524246 |        1608 |         0.070000
+|      1617787 |        1807 |         0.920000
+|      1617787 |        1608 |         0.070000
+|      1615583 |        1305 |         0.920000
+|      1615583 |        1806 |         0.070000
+|      1615460 |        1613 |         0.540646
+|      1615460 |        1603 |         0.041136
