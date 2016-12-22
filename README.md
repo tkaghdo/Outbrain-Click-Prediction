@@ -32,7 +32,7 @@ clicks_test.csv
 
 * display_id: content recommendations served to a specific user
 
-* ad_id: displayed advertisement id
+* ad_id: advertisements shown on the document
 
 sample output
 
@@ -123,6 +123,8 @@ documents_catgories.csv
 * category_id: the category type covered in the document
 * confidence_level: confidence that the given category was referred to in the document
 
+sample output
+
 |   document_id|  category_id|  confidence_level|
 |--------------|-------------|------------------|
 |      1595802 |         1611|          0.920000
@@ -135,3 +137,76 @@ documents_catgories.csv
 |      1615583 |        1806 |         0.070000
 |      1615460 |        1613 |         0.540646
 |      1615460 |        1603 |         0.041136
+
+
+events.csv
+
+* display_id: html page that contains the all the content including Outbrains's promoted content
+* uuid: user unique id
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* timestamp: the timestamps are relative to the first time in the dataset. If you wish to recover the actual epoch time of the visit, add 1465876799998 to the timestamp
+* platform: desktop = 1, mobile = 2, tablet =3
+* geo_location: country>state>DMA
+
+sample output
+
+|   display_id|            uuid|  document_id|  timestamp| platform| geo_location|
+|-------------|----------------|-------------|-----------|---------|-------------|
+|           1 | cb8c55702adb93 |      379743 |        61 |       3 |   US>SC>519
+|           2 | 79a85fa78311b9 |     1794259 |        81 |       2 |   US>CA>807
+|           3 | 822932ce3d8757 |     1179111 |       182 |       2 |   US>MI>505
+|           4 | 85281d0a49f7ac |     1777797 |       234 |       2 |   US>WV>564
+|           5 | 8d0daef4bf5b56 |      252458 |       338 |       2 |       SG>00
+|           6 | 7765b4faae4ad4 |     1773517 |       395 |       3 |   US>OH>510
+|           7 | 2cc3f6457d16da |     1149661 |       602 |       2 |   US>MT>762
+|           8 | 166fc654d73c98 |     1330329 |       638 |       2 |   US>PA>566
+|           9 | 9dddccf70f6067 |     1772126 |       667 |       1 |   US>FL>528
+|          10 | b09a0e92aa4d17 |      157455 |       693 |       1 |          US
+
+
+promoted_content.csv
+* ad_id: advertisements shown on the document
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* campaign_id: the ad campaign that is run by the advertiser
+* advertiser_id: the advertiser
+
+sample output
+
+|   ad_id|  document_id|  campaign_id|  advertiser_id|
+|--------|-------------|-------------|---------------|
+|      1 |         6614|            1|              7|
+|      2 |      471467 |           2 |             7
+|      3 |        7692 |           3 |             7
+|      4 |      471471 |           2 |             7
+|      5 |      471472 |           2 |             7
+|      6 |       12736 |           1 |             7
+|      7 |       12808 |           1 |             7
+|      8 |      471477 |           2 |             7
+|      9 |       13379 |           1 |            7
+|     10 |       13885 |           1 |             7
+
+
+page_views.csv
+
+* uuid: user unique id
+* document_id: html page that contains the all the content including Outbrains's promoted content
+* timestamp: the timestamps are relative to the first time in the dataset. If you wish to recover the actual epoch time of the visit, add 1465876799998 to the timestamp
+* platform: desktop = 1, mobile = 2, tablet =3
+* geo_location: country>state>DMA
+* traffic_source: internal = 1, search = 2, social = 3
+
+
+sample output
+
+|             uuid|  document_id|  timestamp|  platform| geo_location|  traffic_source|
+|-----------------|-------------|-----------|----------|-------------|----------------|
+|  1fd5f051fba643 |         120 |  31905835 |        1 |          RS |  2
+|  8557aa9004be3b |         120 |  32053104 |        1 |       VN>44 |  2
+|  c351b277a358f0 |         120 |  54013023 |        1 |       KR>12 |  2
+|  8205775c5387f9 |         120 |  44196592 |        1 |       IN>16 |  2
+|  9cb0ccd8458371 |         120 |  65817371 |        1 |   US>CA>807 |  2
+|  2aa611f32875c7 |         120 |  71495491 |        1 |       CA>ON |  2
+|  f55a6eaf2b34ab |         120 |  73309199 |        1 |       BR>27 |  2
+|  cc01b582c8cbff |         120 |  50033577 |        1 |       CA>BC |  2
+|  6c802978b8dd4d |         120 |  66590306 |        1 |       CA>ON |  2
+|  f4e423314303ff |         120 |  48314254 |        1 |   US>LA>622 |  1
