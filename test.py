@@ -8,7 +8,6 @@ __author__ = 'Tamby Kaghdo'
 
 import pandas as pd
 import zipfile
-import numpy as np
 
 
 #clicks_train
@@ -72,15 +71,25 @@ page_views_sample_events_df = page_views_sample_df.merge(events_df, left_on=join
 # join by_document_id_df with page_views_sample_events_df by document_id
 by_document_id_with_page_views_sample_events_df = by_document_id_df.merge(page_views_sample_events_df, left_on="document_id", right_on="document_id", how="inner")
 
-
+# join by_document_id_with_page_views_sample_events_df with promoted_content_df by display_id
+pre_final_sample_df = by_document_id_with_page_views_sample_events_df.merge(promoted_content_df \
+                                                                        , left_on="document_id", right_on="document_id", how="inner")
+clicks_train_df.sort_values("display_id", ascending=False, inplace=True)
+print(clicks_train_df.head(20))
+print("********")
+pre_final_sample_df.sort_values("display_id", ascending=False, inplace=True)
+print(pre_final_sample_df.head(20))
 #join above with clicks_train_df by
-train_df = by_document_id_with_page_views_sample_events_df.merge(clicks_train_df, left_on="display_id", right_on="display_id", how="inner")
-print(len(train_df))
-print(train_df.head())
-print(train_df.columns.values)
+#train_df = pre_final_sample_df.merge(clicks_train_df, left_on=["display_id", "ad_id"], right_on=["display_id", "ad_id"], how="inner")
+#print(len(train_df))
+#print(train_df.head())
+#print(train_df.columns.values)
 
 
 
 
+with open("clicks_train_df_ad_id.txt", 'wb') as abc:
+    np.savetxt(abc, clicks_train_df["ad_id"].unique(), delimiter=",")
 
-
+with open("pre_final_sample_df_ad_id.txt", 'wb') as abc:
+    np.savetxt(abc, pre_final_sample_df["ad_id"].unique(), delimiter=",")
