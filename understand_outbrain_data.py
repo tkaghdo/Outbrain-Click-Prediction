@@ -75,9 +75,26 @@ by_document_id_with_page_views_sample_events_df = by_document_id_df.merge(page_v
 
 #join above with clicks_train_df by
 train_df = by_document_id_with_page_views_sample_events_df.merge(clicks_train_df, left_on="display_id", right_on="display_id", how="inner")
+
+# drop entity_id, publish_time, uuid, timestamp
+columns_to_drop = ["entity_id", "publish_time", "uuid", "timestamp"]
+train_df = train_df.drop(columns_to_drop, axis=1)
+
 print(len(train_df))
 print(train_df.head())
 print(train_df.columns.values)
+
+# is there any nulls
+print("Null Counts:")
+null_counts = train_df.isnull().sum()
+print(null_counts)
+
+# which columns have string values
+object_columns_df = train_df.select_dtypes(include=["object"])
+print("Columns with string values:")
+print(object_columns_df.head(1))
+
+# convert geo_location to numerical
 
 
 
