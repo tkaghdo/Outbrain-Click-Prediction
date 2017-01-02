@@ -95,6 +95,15 @@ print("Columns with string values:")
 print(object_columns_df.head(1))
 
 # convert geo_location to numerical
+train_df["geo_location_categories"] = train_df["geo_location"].astype('category')
+train_df["geo_location_codes"] = train_df["geo_location_categories"].cat.codes
+columns_to_drop = ["geo_location_categories", "geo_location"]
+train_df = train_df.drop(columns_to_drop, axis=1)
+print(train_df.head())
+
+# save train data to file
+train_df.to_csv("./data/train.csv", sep=',')
+print("saved train data to file")
 
 
 
