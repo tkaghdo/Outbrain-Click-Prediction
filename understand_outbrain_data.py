@@ -2,14 +2,12 @@ __author__ = 'Tamby Kaghdo'
 
 ################################################################################
 # This script is used to understand the basics of the data provided
-# the results of this investigation will be recorded in README.MD
+# and to do some cleanup and create complete train and test files
 ################################################################################
 
 
 import pandas as pd
 import zipfile
-import numpy as np
-
 
 #clicks_train
 zf = zipfile.ZipFile('./data/clicks_train.csv.zip')
@@ -38,6 +36,10 @@ documents_categories_df = pd.read_csv(zf.open('documents_categories.csv'))
 #page_views_sample
 zf = zipfile.ZipFile('./data/page_views_sample.csv.zip')
 page_views_sample_df = pd.read_csv(zf.open('page_views_sample.csv'))
+
+#page_views. this file is huge!
+#zf = zipfile.ZipFile('./data/page_views.csv.zip')
+#page_views_sample_df = pd.read_csv(zf.open('page_views.csv'))
 
 #events
 zf = zipfile.ZipFile('./data/events.csv.zip')
@@ -73,20 +75,33 @@ page_views_sample_events_df = page_views_sample_df.merge(events_df, left_on=join
 by_document_id_with_page_views_sample_events_df = by_document_id_df.merge(page_views_sample_events_df, left_on="document_id", right_on="document_id", how="inner")
 
 
-#join above with clicks_train_df by
+# join above with clicks_train_df and clicks_test_df by display_id
 train_df = by_document_id_with_page_views_sample_events_df.merge(clicks_train_df, left_on="display_id", right_on="display_id", how="inner")
+test_df = by_document_id_with_page_views_sample_events_df.merge(clicks_test_df, left_on="display_id", right_on="display_id", how="inner")
 
 # drop entity_id, publish_time, uuid, timestamp
 columns_to_drop = ["entity_id", "publish_time", "uuid", "timestamp"]
 train_df = train_df.drop(columns_to_drop, axis=1)
+test_df = test_df.drop(columns_to_drop, axis=1)
 
+print("Train Info:")
 print(len(train_df))
 print(train_df.head())
 print(train_df.columns.values)
 
+print("Test Info:")
+print("Train Info:")
+print(len(test_df))
+print(test_df.head())
+print(test_df.columns.values)
+
 # is there any nulls
-print("Null Counts:")
+print("Train Null Counts:")
 null_counts = train_df.isnull().sum()
+print(null_counts)
+
+print("Test Null Counts:")
+null_counts = test_df.isnull().sum()
 print(null_counts)
 
 # which columns have string values
@@ -94,16 +109,26 @@ object_columns_df = train_df.select_dtypes(include=["object"])
 print("Columns with string values:")
 print(object_columns_df.head(1))
 
-# convert geo_location to numerical
+# convert geo_location to numerical (Train)
 train_df["geo_location_categories"] = train_df["geo_location"].astype('category')
 train_df["geo_location_codes"] = train_df["geo_location_categories"].cat.codes
 columns_to_drop = ["geo_location_categories", "geo_location"]
 train_df = train_df.drop(columns_to_drop, axis=1)
 print(train_df.head())
 
-# save train data to file
-train_df.to_csv("./data/train.csv", sep=',')
+# convert geo_location to numerical (Test)
+test_df["geo_location_categories"] = test_df["geo_location"].astype('category')
+test_df["geo_location_codes"] = test_df["geo_location_categories"].cat.codes
+columns_to_drop = ["geo_location_categories", "geo_location"]
+test_df = test_df.drop(columns_to_drop, axis=1)
+print(test_df.head())
+
+# save train and test data to file
+train_df.to_csv("./cleaned_data/train.csv", sep=',')
 print("saved train data to file")
+
+train_df.to_csv("./cleaned_data/test.csv", sep=',')
+print("saved test data to file")
 
 
 
