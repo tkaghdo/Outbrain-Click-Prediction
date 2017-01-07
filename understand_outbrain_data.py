@@ -34,12 +34,13 @@ zf = zipfile.ZipFile('./data/documents_categories.csv.zip')
 documents_categories_df = pd.read_csv(zf.open('documents_categories.csv'))
 
 #page_views_sample
-zf = zipfile.ZipFile('./data/page_views_sample.csv.zip')
-page_views_sample_df = pd.read_csv(zf.open('page_views_sample.csv'))
+#zf = zipfile.ZipFile('./data/page_views_sample.csv.zip')
+#page_views_sample_df = pd.read_csv(zf.open('page_views_sample.csv'))
 
 #page_views. this file is huge!
 #zf = zipfile.ZipFile('./data/page_views.csv.zip')
 #page_views_sample_df = pd.read_csv(zf.open('page_views.csv'))
+#page_views_sample_df = pd.read_csv("./data/page_views.csv")
 
 #events
 zf = zipfile.ZipFile('./data/events.csv.zip')

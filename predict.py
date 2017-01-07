@@ -15,7 +15,7 @@ features_columns = ["document_id", "topic_id", "topic_confidence_level", "entiti
                     "category_id", "category_confidence_level", "platform"]
 
 # create Random Forest model
-lr = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=50,  max_depth=5)
+lr = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=25,  max_depth=5)
 kf = KFold(train_df.shape[0], random_state=1)
 predictions = cross_val_predict(lr,train_df[features_columns], train_df["clicked"], cv=kf)
 predictions = pd.Series(predictions)
@@ -56,4 +56,9 @@ print("True Negatives Rate: {0}".format(tnr))
 print("False negatives Rate: {0}".format(fnr))
 print("AUC: {0}".format(auc))
 
+
+# add prediction to train df
+train_df["predicted_clicks"] = predictions
+
+print(train_df.head())
 
