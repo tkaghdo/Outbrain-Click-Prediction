@@ -11,11 +11,11 @@ train_df = pd.read_csv("./cleaned_data/train.csv")
 train_df.drop(train_df.columns[0],axis=1,inplace=True)
 # print(train_df.head())
 
-features_columns = ["document_id", "topic_id", "topic_confidence_level", "entities_confidence_level", "source_id", "publisher_id", \
-                    "category_id", "category_confidence_level", "platform"]
+features_columns = ["document_id", "topic_id", "source_id", "publisher_id", \
+                    "category_id", "platform"]
 
 # create Random Forest model
-lr = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=25,  max_depth=5)
+lr = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=25, max_depth=6)
 kf = KFold(train_df.shape[0], random_state=1)
 predictions = cross_val_predict(lr,train_df[features_columns], train_df["clicked"], cv=kf)
 predictions = pd.Series(predictions)

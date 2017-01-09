@@ -20,10 +20,12 @@ clicks_test_df = pd.read_csv(zf.open('clicks_test.csv'))
 #documents_topics
 zf = zipfile.ZipFile('./data/documents_topics.csv.zip')
 documents_topics_df = pd.read_csv(zf.open('documents_topics.csv'))
+documents_topics_df.drop("confidence_level", axis=1, inplace=True)
 
 #documents_entities
 zf = zipfile.ZipFile('./data/documents_entities.csv.zip')
 documents_entities_df = pd.read_csv(zf.open('documents_entities.csv'))
+documents_entities_df.drop("confidence_level", axis=1, inplace=True)
 
 #documents_meta
 zf = zipfile.ZipFile('./data/documents_meta.csv.zip')
@@ -32,10 +34,11 @@ documents_meta_df = pd.read_csv(zf.open('documents_meta.csv'))
 #document_categories
 zf = zipfile.ZipFile('./data/documents_categories.csv.zip')
 documents_categories_df = pd.read_csv(zf.open('documents_categories.csv'))
+documents_categories_df.drop("confidence_level", axis=1, inplace=True)
 
 #page_views_sample
-#zf = zipfile.ZipFile('./data/page_views_sample.csv.zip')
-#page_views_sample_df = pd.read_csv(zf.open('page_views_sample.csv'))
+zf = zipfile.ZipFile('./data/page_views_sample.csv.zip')
+page_views_sample_df = pd.read_csv(zf.open('page_views_sample.csv'))
 
 #page_views. this file is huge!
 #zf = zipfile.ZipFile('./data/page_views.csv.zip')
