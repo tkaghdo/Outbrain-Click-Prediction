@@ -62,3 +62,16 @@ train_df["predicted_clicks"] = predictions
 
 print(train_df.head())
 
+# open test file
+test_df = pd.read_csv("./cleaned_data/test.csv")
+print("START TEST DATA\n")
+test_df.drop(test_df.columns[0],axis=1,inplace=True)
+
+predictions = cross_val_predict(lr,test_df[features_columns], cv=kf)
+predictions = pd.Series(predictions)
+
+
+#labels = lr.predict(test_df[features_columns])
+#test_df["predicted_label"] = labels
+
+print(test_df.head())
