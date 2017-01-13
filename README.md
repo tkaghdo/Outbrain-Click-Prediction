@@ -210,3 +210,13 @@ sample output
 |  cc01b582c8cbff |         120 |  50033577 |        1 |       CA>BC |  2
 |  6c802978b8dd4d |         120 |  66590306 |        1 |       CA>ON |  2
 |  f4e423314303ff |         120 |  48314254 |        1 |   US>LA>622 |  1
+
+Usage
+
+python predict.py
+
+
+Accuracy
+
+submission file
+
