@@ -213,10 +213,20 @@ sample output
 
 Usage
 
-python predict.py
+python predict.py load_file_mode classifier cross_validation_on_off
+running this script will create a submission file for Kaggle competition: https://www.kaggle.com/c/outbrain-click-prediction
+example 1: python predict.py "sample" "random_forest" "True"
+example 2: python predict.py "full" "SGD" "False"
 
+there are two modes of reading page view files: sample file and full file
+this script currently utilizes two types of classifiers: Random Forest and stochastic gradient descent (SGD) learning
 
 Accuracy
 
-submission file
+Accuracy is calculated by running accuracy_score function from sklearn.metrics and by Mean Average Precision
+
+|Classifier   |Accuracy method                |Accuracy|page view file size (Sample or Full)|
+|-------------|-------------------------------|--------|------------------------------------|
+|Random Forest| sklearn.metrics.accuracy_score|        |Sample
+|SGD          | sklearn.metrics.accuracy_score|   0.74 |Sample
 

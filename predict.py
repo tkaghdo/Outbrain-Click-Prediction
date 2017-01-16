@@ -1,5 +1,11 @@
 """
 predict which recommended content each user will click
+there are two modes of reading page view files: sample file and full file
+this script currently utilizes two types of classifiers: Random Forest and stochastic gradient descent (SGD) learning
+usage: python predict.py load_file_mode classifier cross_validation_on_off
+running this script will create a submission file for Kaggle competition: https://www.kaggle.com/c/outbrain-click-prediction
+example 1: python predict.py "sample" "random_forest" "True"
+example 2: python predict.py "full" "SGD" "False"
 """
 
 import pandas as pd
@@ -9,15 +15,22 @@ from sklearn.metrics import roc_auc_score
 import sys
 import csv
 import understand_outbrain_data as uod
+from sklearn.linear_model import SGDClassifier
+from sklearn.metrics import accuracy_score
+from optparse import OptionParser
 
 __author__ = 'Tamby Kaghdo'
 
 
-def predict(classifier):
+def predict(classifier, page_view_file_mode, cross_validation_switch):
 
     if classifier == "random_forest":
+
         # load files and transform the train and test files
-        uod.load_files(load_full_page_views=False)
+        if page_view_file_mode == "sample":
+            uod.load_files(load_full_page_views=False)
+        elif page_view_file_mode == "full":
+            uod.load_files(load_full_page_views=True)
 
         try:
             # open train file
@@ -130,28 +143,88 @@ def predict(classifier):
 
                 file_writer.writerow([key, ad_id_str])
     elif classifier == "SGD":
-        # TODO
-        # http://stackoverflow.com/questions/24617356/sklearn-sgdclassifier-partial-fit
-        # http://scikit-learn.org/stable/auto_examples/applications/plot_out_of_core_classification.html#sphx-glr-auto-examples-applications-plot-out-of-core-classification-py
-        pass
-        from sklearn.linear_model import SGDClassifier
-        import random
-        clf2 = SGDClassifier(loss='log')  # shuffle=True is useless here
-        shuffledRange = range(len(X))
-        n_iter = 5
-        for n in range(n_iter):
-            random.shuffle(shuffledRange)
-            shuffledX = [X[i] for i in shuffledRange]
-            shuffledY = [Y[i] for i in shuffledRange]
-            for batch in batches(range(len(shuffledX)), 10000):
-                clf2.partial_fit(shuffledX[batch[0]:batch[-1] + 1], shuffledY[batch[0]:batch[-1] + 1],
-                                 classes=numpy.unique(Y))
+
+        # load files and transform the train and test files
+        if page_view_file_mode == "sample":
+            uod.load_files(load_full_page_views=False)
+        elif page_view_file_mode == "full":
+            uod.load_files(load_full_page_views=True)
+
+        try:
+            # open train file
+            train_df = pd.read_csv("./cleaned_data/train.csv")
+
+        except IOError as e:
+            print("ERROR: loading files unsuccessful")
+            print(e)
+            sys.exit(e.errno)
+
+        # remove row counts
+        train_df.drop(train_df.columns[0],axis=1,inplace=True)
+
+        features_columns = ["document_id", "topic_id", "source_id", "publisher_id", \
+                            "category_id", "platform"]
+
+        X = train_df[features_columns]
+        Y = train_df["clicked"]
+        numFolds = 10
+        kf = KFold(len(train_df), numFolds, shuffle=True)
+        clf2 = SGDClassifier(loss='log', penalty="l2", n_iter=1000)
+        total = 0
+        for train_indices, test_indices in kf:
+            train_X = X.ix[train_indices]
+            train_Y = Y.ix[train_indices]
+            test_X = X.ix[test_indices]
+            test_Y = Y.ix[test_indices]
+
+            clf2.fit(train_X, train_Y)
+            predictions = clf2.predict(test_X)
+            total += accuracy_score(test_Y, predictions)
+
+        accuracy = total / numFolds
+        print("Train with cross validation accuracy score", accuracy)
+
+
+        # fit the model
+        clf2 = SGDClassifier(loss='log', penalty="l2", n_iter=1000)
+        clf2.fit(X, Y)
+
+        try:
+            # open test file
+            test_df = pd.read_csv("./cleaned_data/test.csv")
+
+        except IOError as e:
+            print("ERROR: loading files unsuccessful")
+            print(e)
+            sys.exit(e.errno)
+
+        test_df.drop(test_df.columns[0], axis=1, inplace=True)
+        predictions = clf2.predict(test_df[features_columns])
+        #clf2 = SGDClassifier(loss='log', penalty="l2", n_iter=1000)
+        #clf2.fit(train_df[features_columns], train_df["clicked"])
 
 
 def main():
+    status = True
+    use = '''Usage: %prog model_methodload_file_mode classifier cross_validation_on_off
+             example 1: python predict.py "sample" "random_forest" "True"
+             example 2: python predict.py "full" "SGD" "False"
+    '''
+    parser = OptionParser(usage=use)
+    (options, args) = parser.parse_args()
+    print(args)
+    if len(args) != 3:
+        parser.error("incorrect number of arguments")
+        status = False
+    else:
+        pv_file_mode = args[0]
+        classifier = args[1]
+        cv_switch = args[2]
+        # use the transformed train and test to predict and create a submission file
+        #predict("random_forest")
+        #predict("SGD")
 
-    # use the transformed train and test to predict and create a submission file
-    predict("random_forest")
+        predict(classifier=classifier, page_view_file_mode=pv_file_mode, cross_validation_switch=cv_switch)
 
 
 if __name__ == "__main__":
