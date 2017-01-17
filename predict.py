@@ -25,12 +25,16 @@ __author__ = 'Tamby Kaghdo'
 def predict(classifier, page_view_file_mode, cross_validation_switch):
 
     if classifier == "random_forest":
-
+        print("Using Random Forest")
         # load files and transform the train and test files
         if page_view_file_mode == "sample":
-            uod.load_files(load_full_page_views=False)
+            print("loadind and joining data sets (sample page views)")
+            #uod.load_files(load_full_page_views=False)
         elif page_view_file_mode == "full":
+            print("loadind and joining data sets (full page views)")
             uod.load_files(load_full_page_views=True)
+
+        print("finished loadind and joining files")
 
         try:
             # open train file
@@ -47,45 +51,30 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         features_columns = ["document_id", "topic_id", "source_id", "publisher_id", \
                             "category_id", "platform"]
 
-        # check model performance using cross validation
-        lr = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=25, max_depth=6)
-        kf = KFold(train_df.shape[0], random_state=1)
-        predictions = cross_val_predict(lr,train_df[features_columns], train_df["clicked"], cv=kf)
-        predictions = pd.Series(predictions)
 
-        # calculate errors
-        # false positives
-        fp_filter = (predictions == 1) & (train_df["clicked"] == 0)
-        fp = len(predictions[fp_filter])
+        X = train_df[features_columns]
+        Y = train_df["clicked"]
+        rf = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=25, max_depth=6)
 
-        # true positives
-        tp_filter = (predictions == 1) & (train_df["clicked"] == 1)
-        tp = len(predictions[tp_filter])
+        if cross_validation_switch:
+            numFolds = 10
+            kf = KFold(len(train_df), numFolds, shuffle=True)
+            total = 0
+            for train_indices, test_indices in kf:
+                train_X = X.ix[train_indices]
+                train_Y = Y.ix[train_indices]
+                test_X = X.ix[test_indices]
+                test_Y = Y.ix[test_indices]
 
-        # false negatives
-        fn_filter = (predictions == 0) & (train_df["clicked"] == 1)
-        fn = len(predictions[fn_filter])
+                rf.fit(train_X, train_Y)
+                predictions = rf.predict(test_X)
+                total += accuracy_score(test_Y, predictions)
 
-        # true negatives
-        tn_filter = (predictions == 0) & (train_df["clicked"] == 0)
-        tn = len(predictions[tn_filter])
-
-        # rates
-        tpr = float(tp) / float((tp + fn))
-        fpr = float(fp) / float((fp + tn))
-        tnr = float(tn) / float((tn + fp))
-        fnr = float(fn) / float((fn + tp))
-
-        print("True Positives Rate: {0}".format(tpr))
-        print("False Positive Rate: {0}".format(fpr))
-        print("True Negatives Rate: {0}".format(tnr))
-        print("False negatives Rate: {0}".format(fnr))
-
-        # fit the model
-        lr.fit(train_df[features_columns], train_df["clicked"])
-        predictions = lr.predict(train_df[features_columns])
-        auc = roc_auc_score(train_df["clicked"],predictions)
-        print("AUC: {0}".format(auc))
+            accuracy = total / numFolds
+            print("Train with cross validation accuracy score", accuracy)
+        else:
+            # fit the model
+            rf.fit(X, Y)
 
         try:
             # open test file
@@ -99,13 +88,14 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         test_df.drop(test_df.columns[0],axis=1,inplace=True)
 
         # Use the model to make predictions based on testing data.
-        predictions = lr.predict(test_df[features_columns])
-        predictions_proba = lr.predict_proba(test_df[features_columns])[:,1]
+        predictions = rf.predict(test_df[features_columns])
+        predictions_proba = rf.predict_proba(test_df[features_columns])[:,1]
 
         test_df["predicted_label"] = predictions
         test_df["predicted_proba"] = predictions_proba
 
         print("TEST DATA\n")
+        print(test_df.head(0))
 
         # prepare submission file
         drop_columns = ["document_id", "topic_id", "topic_confidence_level", "entities_confidence_level",
