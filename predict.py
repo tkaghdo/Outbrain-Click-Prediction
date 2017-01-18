@@ -38,6 +38,7 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
 
         try:
             # open train file
+            print("open the train file")
             train_df = pd.read_csv("./cleaned_data/train.csv")
 
         except IOError as e:
@@ -56,7 +57,8 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         Y = train_df["clicked"]
         rf = RandomForestClassifier(random_state=1, class_weight="balanced", n_estimators=25, max_depth=6)
 
-        if cross_validation_switch:
+        if cross_validation_switch == True:
+            print("K Fold Cross Validation - RF")
             numFolds = 10
             kf = KFold(len(train_df), numFolds, shuffle=True)
             total = 0
@@ -74,11 +76,14 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
             print("Train with cross validation accuracy score", accuracy)
         else:
             # fit the model
+            print("fitting the model without cross validation")
             rf.fit(X, Y)
 
         try:
             # open test file
             test_df = pd.read_csv("./cleaned_data/test.csv")
+            print("opened the test file. Here is how the first 10 rows look like:")
+            print(test_df.head())
 
         except IOError as e:
             print("ERROR: loading files unsuccessful")
@@ -95,11 +100,11 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         test_df["predicted_proba"] = predictions_proba
 
         print("TEST DATA\n")
-        print(test_df.head(0))
+        print(test_df.head())
 
         # prepare submission file
-        drop_columns = ["document_id", "topic_id", "topic_confidence_level", "entities_confidence_level",
-                        "source_id", "publisher_id", "category_id", "category_confidence_level", "platform",
+        drop_columns = ["document_id", "topic_id",
+                        "source_id", "publisher_id", "category_id", "platform",
                         "traffic_source", "clicked", "geo_location_codes"]
 
         test_df.drop(drop_columns,axis=1,inplace=True)
@@ -209,7 +214,7 @@ def main():
     else:
         pv_file_mode = args[0]
         classifier = args[1]
-        cv_switch = args[2]
+        cv_switch = bool(args[2])
         # use the transformed train and test to predict and create a submission file
         #predict("random_forest")
         #predict("SGD")
