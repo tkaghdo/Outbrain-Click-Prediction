@@ -29,7 +29,7 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         # load files and transform the train and test files
         if page_view_file_mode == "sample":
             print("loadind and joining data sets (sample page views)")
-            #uod.load_files(load_full_page_views=False)
+            uod.load_files(load_full_page_views=False)
         elif page_view_file_mode == "full":
             print("loadind and joining data sets (full page views)")
             uod.load_files(load_full_page_views=True)
@@ -138,12 +138,16 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
 
                 file_writer.writerow([key, ad_id_str])
     elif classifier == "SGD":
-
+        print("Using SGD")
         # load files and transform the train and test files
         if page_view_file_mode == "sample":
-            uod.load_files(load_full_page_views=False)
+            print("loadind and joining data sets (sample page views)")
+            #uod.load_files(load_full_page_views=False)
         elif page_view_file_mode == "full":
+            print("loadind and joining data sets (full page views)")
             uod.load_files(load_full_page_views=True)
+
+        print("finished loadind and joining files")
 
         try:
             # open train file
@@ -162,27 +166,31 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
 
         X = train_df[features_columns]
         Y = train_df["clicked"]
-        numFolds = 10
-        kf = KFold(len(train_df), numFolds, shuffle=True)
         clf2 = SGDClassifier(loss='log', penalty="l2", n_iter=1000)
-        total = 0
-        for train_indices, test_indices in kf:
-            train_X = X.ix[train_indices]
-            train_Y = Y.ix[train_indices]
-            test_X = X.ix[test_indices]
-            test_Y = Y.ix[test_indices]
 
-            clf2.fit(train_X, train_Y)
-            predictions = clf2.predict(test_X)
-            total += accuracy_score(test_Y, predictions)
+        print("the switch", cross_validation_switch)
+        if cross_validation_switch == True:
+            print("K Fold Cross Validation - SGD")
+            numFolds = 10
+            kf = KFold(len(train_df), numFolds, shuffle=True)
+            total = 0
+            for train_indices, test_indices in kf:
+                train_X = X.ix[train_indices]
+                train_Y = Y.ix[train_indices]
+                test_X = X.ix[test_indices]
+                test_Y = Y.ix[test_indices]
 
-        accuracy = total / numFolds
-        print("Train with cross validation accuracy score", accuracy)
+                clf2.fit(train_X, train_Y)
+                predictions = clf2.predict(test_X)
+                total += accuracy_score(test_Y, predictions)
 
+            accuracy = total / numFolds
+            print("Train with cross validation accuracy score", accuracy)
 
+        elif cross_validation_switch == False:
         # fit the model
-        clf2 = SGDClassifier(loss='log', penalty="l2", n_iter=1000)
-        clf2.fit(X, Y)
+            print("fitting the model without cross validation")
+            clf2.fit(X, Y)
 
         try:
             # open test file
@@ -195,15 +203,18 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
 
         test_df.drop(test_df.columns[0], axis=1, inplace=True)
         predictions = clf2.predict(test_df[features_columns])
-        #clf2 = SGDClassifier(loss='log', penalty="l2", n_iter=1000)
-        #clf2.fit(train_df[features_columns], train_df["clicked"])
+        predictions_proba = clf2.predict_proba(test_df[features_columns])[:, 1]
+        print(type(predictions))
+        print(predictions)
+        print(predictions_proba)
+
 
 
 def main():
     status = True
     use = '''Usage: %prog model_methodload_file_mode classifier cross_validation_on_off
-             example 1: python predict.py "sample" "random_forest" "True"
-             example 2: python predict.py "full" "SGD" "False"
+             example 1: python predict.py "sample" "random_forest" "CV"
+             example 2: python predict.py "full" "SGD" "NCV"
     '''
     parser = OptionParser(usage=use)
     (options, args) = parser.parse_args()
@@ -214,7 +225,11 @@ def main():
     else:
         pv_file_mode = args[0]
         classifier = args[1]
-        cv_switch = bool(args[2])
+        if args[2] == "CV":
+            cv_switch = True
+        else:
+            cv_switch = False
+
         # use the transformed train and test to predict and create a submission file
         #predict("random_forest")
         #predict("SGD")
