@@ -142,7 +142,7 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         # load files and transform the train and test files
         if page_view_file_mode == "sample":
             print("loadind and joining data sets (sample page views)")
-            #uod.load_files(load_full_page_views=False)
+            uod.load_files(load_full_page_views=False)
         elif page_view_file_mode == "full":
             print("loadind and joining data sets (full page views)")
             uod.load_files(load_full_page_views=True)
