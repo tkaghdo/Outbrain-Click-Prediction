@@ -207,7 +207,46 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         print(type(predictions))
         print(predictions)
         print(predictions_proba)
+        print("TEST DATA\n")
+        print(test_df.head())
 
+        # prepare submission file
+        drop_columns = ["document_id", "topic_id",
+                        "source_id", "publisher_id", "category_id", "platform",
+                        "traffic_source", "clicked", "geo_location_codes"]
+
+        test_df.drop(drop_columns, axis=1, inplace=True)
+        test_df.sort_values(by=["display_id", "ad_id", "predicted_label", "predicted_proba"],
+                            ascending=[False, False, False, False], inplace=True)
+
+        test_df.drop(["predicted_label", "predicted_proba"], axis=1, inplace=True)
+
+        test_group_by = test_df.groupby("display_id")["ad_id"].apply(list)
+
+        submission_dict = {}
+
+        # create a dictionary to hold display ids and unique ad ids
+        for index, row in test_group_by.iteritems():
+            unique_lst = []
+            for i in row:
+                if i not in unique_lst:
+                    unique_lst.append(i)
+            submission_dict[index] = unique_lst
+
+        # write to the submission file
+        with open("./cleaned_data/submission.csv", "w") as submission_file_handle:
+            file_writer = csv.writer(submission_file_handle, delimiter=',', quoting=csv.QUOTE_NONE, quotechar='',
+                                     lineterminator='\n')
+            file_writer.writerow(["display_id", "ad_id"])
+            for key, value in submission_dict.items():
+                ad_id_str = ""
+                for i, v in enumerate(value):
+                    if i != 0:
+                        ad_id_str += " " + str(v)
+                    else:
+                        ad_id_str += str(v)
+
+                file_writer.writerow([key, ad_id_str])
 
 
 def main():
