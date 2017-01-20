@@ -204,9 +204,10 @@ def predict(classifier, page_view_file_mode, cross_validation_switch):
         test_df.drop(test_df.columns[0], axis=1, inplace=True)
         predictions = clf2.predict(test_df[features_columns])
         predictions_proba = clf2.predict_proba(test_df[features_columns])[:, 1]
-        print(type(predictions))
-        print(predictions)
-        print(predictions_proba)
+
+        test_df["predicted_label"] = predictions
+        test_df["predicted_proba"] = predictions_proba
+
         print("TEST DATA\n")
         print(test_df.head())
 

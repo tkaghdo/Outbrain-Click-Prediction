@@ -227,6 +227,6 @@ Accuracy is calculated by running accuracy_score function from sklearn.metrics a
 
 |Classifier   |Accuracy method                |Accuracy|page view file size (Sample or Full)|
 |-------------|-------------------------------|--------|------------------------------------|
-|Random Forest| sklearn.metrics.accuracy_score|        |Sample
-|SGD          | sklearn.metrics.accuracy_score|   0.74 |Sample
+|Random Forest| sklearn.metrics.accuracy_score|    0.56|Sample
+|SGD          | sklearn.metrics.accuracy_score|    0.74|Sample
 
