@@ -49,8 +49,8 @@ def load_files(load_full_page_views=False):
         # load the sample file or full file
         if load_full_page_views == False:
             # page_views_sample
-            # zf = zipfile.ZipFile('./data/page_views_sample.csv.zip')
-            page_views_sample_df = pd.read_csv("./data/page_views_sample.csv")
+            # zf = zipfile.ZipFile('./data/page_views.csv.zip')
+            page_views_sample_df = pd.read_csv("./data/page_views.csv")
         else:
             #page_views. this file is huge!
             zf = zipfile.ZipFile('./data/page_views.csv.zip')

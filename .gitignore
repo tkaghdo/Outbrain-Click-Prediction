@@ -3,3 +3,6 @@ data/
 .DS_Store
 cleaned_data/
 *.pyc
+metastore_db/
+spark-warehouse/
+*.log
